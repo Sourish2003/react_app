@@ -1,4 +1,4 @@
-/* .header {
+.header {
   position: fixed;
   width: 100%;
   top: 0;
@@ -139,4 +139,4 @@ nav__item {
     flex-direction: row;
     column-gap: 2.5rem;
   }
-} */
+}

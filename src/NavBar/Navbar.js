@@ -1,11 +1,10 @@
 import React, { useState, useEffect } from "react";
 import { NavLink } from "react-router-dom";
 import { IoClose, IoMenu } from "react-icons/io5";
-import GithubIcon from '../assets/github.jsx'
+import GithubIcon from '../assets/github.jsx';
 import { useAuth0 } from "@auth0/auth0-react";
 
 const Navbar = () => {
-
   useEffect(() => {
     const updateNavbarHeight = () => {
       const navbar = document.querySelector('nav');
@@ -14,7 +13,7 @@ const Navbar = () => {
         document.documentElement.style.setProperty('--navbar-height', `${navbarHeight}px`);
       }
     };
-    
+
     updateNavbarHeight(); // Run on mount
 
     window.addEventListener('resize', updateNavbarHeight);
@@ -48,14 +47,14 @@ const Navbar = () => {
           bg-black/20 backdrop-blur-lg w-4/5 h-full p-12 pt-24 transition-all duration-400
           lg:static lg:h-auto lg:w-auto lg:bg-transparent lg:p-0 lg:backdrop-blur-none`}>
 
-          <ul className="flex flex-col gap-10 lg:flex-row lg:items-center">
+          <ul className="flex flex-col gap-10 lg:flex-row lg:items-center lg:justify-center text-black">
             <li>
               <NavLink to="/">
                 <h1 className="text-2xl font-semibold">Orbit API</h1>
               </NavLink>
             </li>
 
-            <li className="bg-black bg-opacity-100">
+            <li>
               <NavLink to="/" 
                 className="font-semibold hover:text-blue-500 transition-colors duration-400"
                 onClick={closeMenuOnMobile}>
@@ -63,7 +62,7 @@ const Navbar = () => {
               </NavLink>
             </li>
 
-            <li className="bg-black bg-opacity-100">
+            <li>
               <NavLink to="/features" 
                 className="font-semibold hover:text-blue-500 transition-colors duration-400"
                 onClick={closeMenuOnMobile}>
@@ -71,7 +70,7 @@ const Navbar = () => {
               </NavLink>
             </li>
 
-            <li className="bg-black bg-opacity-100">
+            <li>
               <NavLink to="/about" 
                 className="font-semibold hover:text-blue-500 transition-colors duration-400"
                 onClick={closeMenuOnMobile}>
@@ -79,7 +78,7 @@ const Navbar = () => {
               </NavLink>
             </li>
 
-            <li className="bg-black bg-opacity-100">
+            <li>
               <NavLink to="/pricing" 
                 className="font-semibold hover:text-blue-500 transition-colors duration-400"
                 onClick={closeMenuOnMobile}>
@@ -111,18 +110,6 @@ const Navbar = () => {
                 </button>
               )}
             </li>
-
-            <li>
-              <a
-                href="https://github.com/Sourish2003/react_app"
-                target="_blank"
-                rel="noopener noreferrer"
-                className="inline-block hover:opacity-80 transition-opacity duration-300">
-                <div className="w-6 h-6">
-                  <GithubIcon />
-                </div>
-              </a>
-            </li>
           </ul>
 
           <button 
@@ -137,6 +124,16 @@ const Navbar = () => {
           onClick={toggleMenu}>
           <IoMenu />
         </button>
+
+        <a
+          href="https://github.com/Sourish2003/react_app"
+          target="_blank"
+          rel="noopener noreferrer"
+          className="ml-auto mr-4 hover:opacity-80 transition-opacity duration-300">
+          <div>
+            <GithubIcon />
+          </div>
+        </a>
       </nav>
     </header>
   );
