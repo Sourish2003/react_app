@@ -10,10 +10,12 @@ function Home() {
         <p>
           No need to write test cases for APIs, just connect your repository and let the automated tests run!
         </p>
+        
         <button>Get Started</button>
+        
       </div>
       <div className="image-container">
-        <img src="E:\Development\GitHub\travel_world_frontend\lib\assets\image1.jpg" alt="HeroImage" /> {/* Replace "..." with your image source */}
+        <img src={require('./assets/images/image.jpg')} alt="HeroImage"/> {/* Replace "..." with your image source */}
       </div>
     </div>
   );
