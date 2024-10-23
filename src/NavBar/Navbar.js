@@ -1,14 +1,30 @@
-import React, { useState } from "react";
+import React, { useState, useEffect } from "react";
 import { NavLink } from "react-router-dom";
 import { IoClose, IoMenu } from "react-icons/io5";
-import "./Navbar.css";
 import GithubIcon from '../assets/github.jsx'
 import { useAuth0 } from "@auth0/auth0-react";
 
 const Navbar = () => {
 
-  const [showMenu, setShowMenu] = useState(false);
+  useEffect(() => {
+    const updateNavbarHeight = () => {
+      const navbar = document.querySelector('nav');
+      if (navbar) {
+        const navbarHeight = navbar.offsetHeight;
+        document.documentElement.style.setProperty('--navbar-height', `${navbarHeight}px`);
+      }
+    };
+    
+    updateNavbarHeight(); // Run on mount
 
+    window.addEventListener('resize', updateNavbarHeight);
+
+    return () => {
+      window.removeEventListener('resize', updateNavbarHeight); // Clean up on unmount
+    };
+  }, []);
+
+  const [showMenu, setShowMenu] = useState(false);
   const { loginWithRedirect, logout, user, isAuthenticated, isLoading } = useAuth0();
 
   if (isLoading) {
@@ -25,63 +41,74 @@ const Navbar = () => {
     }
   };
 
-
   return (
-    <header className="header">
-      <nav className="nav container">
-        <div
-          className={`nav__menu ${showMenu ? "show-menu" : ""}`}
-          id="nav-menu">
+    <header className="fixed w-full top-0 left-0 bg-transparent z-50">
+      <nav className="flex items-center justify-between relative h-16 m-4">
+        <div className={`fixed top-0 ${showMenu ? 'right-0' : '-right-full'} 
+          bg-black/20 backdrop-blur-lg w-4/5 h-full p-12 pt-24 transition-all duration-400
+          lg:static lg:h-auto lg:w-auto lg:bg-transparent lg:p-0 lg:backdrop-blur-none`}>
 
-          <ul className="nav__list">
+          <ul className="flex flex-col gap-10 lg:flex-row lg:items-center">
             <li>
-              <NavLink to="/">  {/* Link to the home page on click */}
-                <h1 className="App-title">Orbit API</h1>  {/* Website name */}
+              <NavLink to="/">
+                <h1 className="text-2xl font-semibold">Orbit API</h1>
               </NavLink>
             </li>
-            <li className="nav__item">
-              <NavLink to="/" className="nav__link" onClick={closeMenuOnMobile}>
+
+            <li className="bg-black bg-opacity-100">
+              <NavLink to="/" 
+                className="font-semibold hover:text-blue-500 transition-colors duration-400"
+                onClick={closeMenuOnMobile}>
                 Home
               </NavLink>
             </li>
-            <li className="nav__item">
-              <NavLink to="/features" className="nav__link" onClick={closeMenuOnMobile}>
+
+            <li className="bg-black bg-opacity-100">
+              <NavLink to="/features" 
+                className="font-semibold hover:text-blue-500 transition-colors duration-400"
+                onClick={closeMenuOnMobile}>
                 Features
               </NavLink>
             </li>
-            <li className="nav__item">
-              <NavLink
-                to="/about" className="nav__link" onClick={closeMenuOnMobile}>
+
+            <li className="bg-black bg-opacity-100">
+              <NavLink to="/about" 
+                className="font-semibold hover:text-blue-500 transition-colors duration-400"
+                onClick={closeMenuOnMobile}>
                 About Us
               </NavLink>
             </li>
-            <li className="nav__item">
-              <NavLink
-                to="/pricing" className="nav__link" onClick={closeMenuOnMobile}>
+
+            <li className="bg-black bg-opacity-100">
+              <NavLink to="/pricing" 
+                className="font-semibold hover:text-blue-500 transition-colors duration-400"
+                onClick={closeMenuOnMobile}>
                 Pricing
               </NavLink>
             </li>
 
-
-
-            <li>
+            <li className="flex flex-col lg:flex-row items-center gap-4">
               {isAuthenticated ? (
                 <>
-                  <li>
-                    <button onClick={() => logout({ logoutParams: { returnTo: window.location.origin } })}>
-                      Log Out
-                    </button>
-                  </li>
-                  <div>
-                    <img src={user.picture} alt={user.name} />
-                    <h2>{user.name}</h2>
-                    <p>{user.email}</p>
+                  <button
+                    onClick={() => logout({ logoutParams: { returnTo: window.location.origin } })}
+                    className="bg-blue-500 text-white px-6 py-3 rounded hover:bg-blue-600 transition-colors duration-300">
+                    Log Out
+                  </button>
+                  <div className="flex items-center gap-4">
+                    <img src={user.picture} alt={user.name} className="w-8 h-8 rounded-full" />
+                    <div>
+                      <h2 className="font-semibold">{user.name}</h2>
+                      <p className="text-sm">{user.email}</p>
+                    </div>
                   </div>
                 </>
               ) : (
-                <li>
-                  <button onClick={() => loginWithRedirect()}>Log In</button>
-                </li>
+                <button
+                  onClick={() => loginWithRedirect()}
+                  className="bg-blue-500 text-white px-6 py-3 rounded hover:bg-blue-600 transition-colors duration-300">
+                  Log In
+                </button>
               )}
             </li>
 
@@ -90,22 +117,26 @@ const Navbar = () => {
                 href="https://github.com/Sourish2003/react_app"
                 target="_blank"
                 rel="noopener noreferrer"
-                className="github-link">
-                <div className="github-icon-container">
+                className="inline-block hover:opacity-80 transition-opacity duration-300">
+                <div className="w-6 h-6">
                   <GithubIcon />
                 </div>
               </a>
             </li>
-
           </ul>
-          <div className="nav__close" id="nav-close" onClick={toggleMenu}>
+
+          <button 
+            className="absolute top-4 right-6 text-2xl cursor-pointer lg:hidden"
+            onClick={toggleMenu}>
             <IoClose />
-          </div>
+          </button>
         </div>
 
-        <div className="nav__toggle" id="nav-toggle" onClick={toggleMenu}>
+        <button 
+          className="text-2xl cursor-pointer lg:hidden"
+          onClick={toggleMenu}>
           <IoMenu />
-        </div>
+        </button>
       </nav>
     </header>
   );
