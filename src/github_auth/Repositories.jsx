@@ -13,12 +13,13 @@ const Repositories = () => {
 
       try {
         const token = await getAccessTokenSilently({
-          audience: "https://api.github.com/",
-          scope: "repo"
+          audience: "https://dev-hrmgixm7udp8vimi.us.auth0.com/api/v2/",
+          scope: "read:repo read:user repo"
         });
 
         const response = await axios.get('https://api.github.com/user/repos', {
           headers: {
+            Accept: `application/vnd.github+json`,
             Authorization: `Bearer ${token}`
           }
         });

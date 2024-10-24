@@ -4,8 +4,9 @@ import { IoClose, IoMenu } from "react-icons/io5";
 import GithubIcon from '../assets/github.jsx';
 import { useAuth0 } from "@auth0/auth0-react";
 import { fetchGitHubRepositories } from "../github_auth/github.jsx"; // Import the GitHub API handler
+import Repositories from '../github_auth/Repositories.jsx';
 
-const Navbar = () => {
+const Navbar = ({ setRepos }) => {
   useEffect(() => {
     const updateNavbarHeight = () => {
       const navbar = document.querySelector('nav');
@@ -43,11 +44,19 @@ const Navbar = () => {
 
   // Fetch GitHub Repositories
   const fetchRepos = async () => {
-    const githubIdentity = user?.identities?.find(id => id.provider === 'github');
-    if (githubIdentity) {
-      const githubAccessToken = githubIdentity.access_token;
-      const repos = await fetchGitHubRepositories(githubAccessToken); // Fetch repos using API handler
-      console.log("Fetched Repos:", repos);
+    if (!isAuthenticated) return;
+    
+    try {
+      const githubIdentity = user?.identities?.find(id => id.provider === 'github');
+      const githubAccessToken = githubIdentity?.access_token;
+
+      if (githubAccessToken) {
+        const repos = await fetchGitHubRepositories(githubAccessToken);
+        console.log("Fetched Repos:", repos);
+        setRepos(repos); // Set repos state in App component
+      }
+    } catch (error) {
+      console.error('Error fetching repositories:', error);
     }
   };
 
@@ -106,7 +115,7 @@ const Navbar = () => {
                     Log Out
                   </button>
                   <button
-                    onClick={fetchRepos} // Fetch repositories on button click
+                    onClick={() =>fetchRepos()} // Fetch repositories on button click
                     className="bg-green-500 text-white px-6 py-3 rounded hover:bg-green-600 transition-colors duration-300">
                     Fetch GitHub Repos
                   </button>
