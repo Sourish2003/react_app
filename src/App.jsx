@@ -1,11 +1,11 @@
 import React from 'react';
 import { BrowserRouter as Router, Routes, Route } from 'react-router-dom';
 import './App.css';
-import About from './About.js';
-import Home from './Home.jsx';
-import Features from './Features.js';
-import Pricing from './Pricing.js';
-import Navbar from './NavBar/Navbar.js';
+import About from './screens/About.jsx';
+import Home from './screens/Home.jsx';
+import Features from './screens/Features.jsx';
+import Pricing from './screens/Pricing.jsx';
+import Navbar from './NavBar/Navbar.jsx';
 
 function App() {
   return (

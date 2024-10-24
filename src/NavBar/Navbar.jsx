@@ -3,6 +3,7 @@ import { NavLink } from "react-router-dom";
 import { IoClose, IoMenu } from "react-icons/io5";
 import GithubIcon from '../assets/github.jsx';
 import { useAuth0 } from "@auth0/auth0-react";
+import { fetchGitHubRepositories } from "../github_auth/github.jsx"; // Import the GitHub API handler
 
 const Navbar = () => {
   useEffect(() => {
@@ -37,6 +38,16 @@ const Navbar = () => {
   const closeMenuOnMobile = () => {
     if (window.innerWidth <= 1150) {
       setShowMenu(false);
+    }
+  };
+
+  // Fetch GitHub Repositories
+  const fetchRepos = async () => {
+    const githubIdentity = user?.identities?.find(id => id.provider === 'github');
+    if (githubIdentity) {
+      const githubAccessToken = githubIdentity.access_token;
+      const repos = await fetchGitHubRepositories(githubAccessToken); // Fetch repos using API handler
+      console.log("Fetched Repos:", repos);
     }
   };
 
@@ -94,6 +105,11 @@ const Navbar = () => {
                     className="bg-blue-500 text-white px-6 py-3 rounded hover:bg-blue-600 transition-colors duration-300">
                     Log Out
                   </button>
+                  <button
+                    onClick={fetchRepos} // Fetch repositories on button click
+                    className="bg-green-500 text-white px-6 py-3 rounded hover:bg-green-600 transition-colors duration-300">
+                    Fetch GitHub Repos
+                  </button>
                   <div className="flex items-center gap-4">
                     <img src={user.picture} alt={user.name} className="w-8 h-8 rounded-full" />
                     <div>
@@ -104,7 +120,10 @@ const Navbar = () => {
                 </>
               ) : (
                 <button
-                  onClick={() => loginWithRedirect()}
+                  onClick={() => loginWithRedirect({
+                    connection: 'github',
+                    scope: 'read:user repo' // Request GitHub access
+                  })}
                   className="bg-blue-500 text-white px-6 py-3 rounded hover:bg-blue-600 transition-colors duration-300">
                   Log In
                 </button>
@@ -125,6 +144,7 @@ const Navbar = () => {
           <IoMenu />
         </button>
 
+        {/* GitHub Icon aligned to the right with padding */}
         <a
           href="https://github.com/Sourish2003/react_app"
           target="_blank"

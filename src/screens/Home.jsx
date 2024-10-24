@@ -1,5 +1,5 @@
 import React from 'react';
-import './App';
+import '../App';
 
 function Home() {
   return (
@@ -22,8 +22,8 @@ function Home() {
           {/* Right column - Image */}
           <div className="flex-1">
             <div>
-              <img 
-                src={require('./assets/images/image.jpg')} 
+              <img
+                src={require('../assets/images/image.jpg')} 
                 alt="API Testing Illustration" 
                 className="w-full h-auto"
               />
