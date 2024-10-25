@@ -1,32 +1,34 @@
 import React, { useState, useEffect } from "react";
 import { NavLink } from "react-router-dom";
 import { IoClose, IoMenu } from "react-icons/io5";
-import GithubIcon from '../assets/github.jsx';
+import GithubIcon from "../assets/github.jsx";
 import { useAuth0 } from "@auth0/auth0-react";
-import { fetchGitHubRepositories } from "../github_auth/github.jsx"; // Import the GitHub API handler
-import Repositories from '../github_auth/Repositories.jsx';
 
 const Navbar = ({ setRepos }) => {
   useEffect(() => {
     const updateNavbarHeight = () => {
-      const navbar = document.querySelector('nav');
+      const navbar = document.querySelector("nav");
       if (navbar) {
         const navbarHeight = navbar.offsetHeight;
-        document.documentElement.style.setProperty('--navbar-height', `${navbarHeight}px`);
+        document.documentElement.style.setProperty(
+          "--navbar-height",
+          `${navbarHeight}px`
+        );
       }
     };
 
     updateNavbarHeight(); // Run on mount
 
-    window.addEventListener('resize', updateNavbarHeight);
+    window.addEventListener("resize", updateNavbarHeight);
 
     return () => {
-      window.removeEventListener('resize', updateNavbarHeight); // Clean up on unmount
+      window.removeEventListener("resize", updateNavbarHeight); // Clean up on unmount
     };
   }, []);
 
   const [showMenu, setShowMenu] = useState(false);
-  const { loginWithRedirect, logout, user, isAuthenticated, isLoading } = useAuth0();
+  const { loginWithRedirect, logout, user, isAuthenticated, isLoading } =
+    useAuth0();
 
   if (isLoading) {
     return <div>Loading ...</div>;
@@ -42,31 +44,14 @@ const Navbar = ({ setRepos }) => {
     }
   };
 
-  // Fetch GitHub Repositories
-  const fetchRepos = async () => {
-    if (!isAuthenticated) return;
-    
-    try {
-      const githubIdentity = user?.identities?.find(id => id.provider === 'github');
-      const githubAccessToken = githubIdentity?.access_token;
-
-      if (githubAccessToken) {
-        const repos = await fetchGitHubRepositories(githubAccessToken);
-        console.log("Fetched Repos:", repos);
-        setRepos(repos); // Set repos state in App component
-      }
-    } catch (error) {
-      console.error('Error fetching repositories:', error);
-    }
-  };
-
   return (
     <header className="fixed w-full top-0 left-0 bg-transparent z-50">
       <nav className="flex items-center justify-between relative h-16 m-4">
-        <div className={`fixed top-0 ${showMenu ? 'right-0' : '-right-full'} 
+        <div
+          className={`fixed top-0 ${showMenu ? "right-0" : "-right-full"} 
           bg-black/20 backdrop-blur-lg w-4/5 h-full p-12 pt-24 transition-all duration-400
-          lg:static lg:h-auto lg:w-auto lg:bg-transparent lg:p-0 lg:backdrop-blur-none`}>
-
+          lg:static lg:h-auto lg:w-auto lg:bg-transparent lg:p-0 lg:backdrop-blur-none`}
+        >
           <ul className="flex flex-col gap-10 lg:flex-row lg:items-center lg:justify-center text-black">
             <li>
               <NavLink to="/">
@@ -75,33 +60,41 @@ const Navbar = ({ setRepos }) => {
             </li>
 
             <li>
-              <NavLink to="/" 
+              <NavLink
+                to="/"
                 className="font-semibold hover:text-blue-500 transition-colors duration-400"
-                onClick={closeMenuOnMobile}>
+                onClick={closeMenuOnMobile}
+              >
                 Home
               </NavLink>
             </li>
 
             <li>
-              <NavLink to="/features" 
+              <NavLink
+                to="/features"
                 className="font-semibold hover:text-blue-500 transition-colors duration-400"
-                onClick={closeMenuOnMobile}>
+                onClick={closeMenuOnMobile}
+              >
                 Features
               </NavLink>
             </li>
 
             <li>
-              <NavLink to="/about" 
+              <NavLink
+                to="/about"
                 className="font-semibold hover:text-blue-500 transition-colors duration-400"
-                onClick={closeMenuOnMobile}>
+                onClick={closeMenuOnMobile}
+              >
                 About Us
               </NavLink>
             </li>
 
             <li>
-              <NavLink to="/pricing" 
+              <NavLink
+                to="/pricing"
                 className="font-semibold hover:text-blue-500 transition-colors duration-400"
-                onClick={closeMenuOnMobile}>
+                onClick={closeMenuOnMobile}
+              >
                 Pricing
               </NavLink>
             </li>
@@ -110,17 +103,22 @@ const Navbar = ({ setRepos }) => {
               {isAuthenticated ? (
                 <>
                   <button
-                    onClick={() => logout({ logoutParams: { returnTo: window.location.origin } })}
-                    className="bg-blue-500 text-white px-6 py-3 rounded hover:bg-blue-600 transition-colors duration-300">
+                    onClick={() =>
+                      logout({
+                        logoutParams: { returnTo: window.location.origin },
+                      })
+                    }
+                    className="bg-blue-500 text-white px-6 py-3 rounded hover:bg-blue-600 transition-colors duration-300"
+                  >
                     Log Out
                   </button>
-                  <button
-                    onClick={() =>fetchRepos()} // Fetch repositories on button click
-                    className="bg-green-500 text-white px-6 py-3 rounded hover:bg-green-600 transition-colors duration-300">
-                    Fetch GitHub Repos
-                  </button>
+
                   <div className="flex items-center gap-4">
-                    <img src={user.picture} alt={user.name} className="w-8 h-8 rounded-full" />
+                    <img
+                      src={user.picture}
+                      alt={user.name}
+                      className="w-8 h-8 rounded-full"
+                    />
                     <div>
                       <h2 className="font-semibold">{user.name}</h2>
                       <p className="text-sm">{user.email}</p>
@@ -129,27 +127,32 @@ const Navbar = ({ setRepos }) => {
                 </>
               ) : (
                 <button
-                  onClick={() => loginWithRedirect({
-                    connection: 'github',
-                    scope: 'read:user repo' // Request GitHub access
-                  })}
-                  className="bg-blue-500 text-white px-6 py-3 rounded hover:bg-blue-600 transition-colors duration-300">
+                  onClick={() =>
+                    loginWithRedirect({
+                      connection: "github",
+                      scope: "read:user repo", // Request GitHub access
+                    })
+                  }
+                  className="bg-blue-500 text-white px-6 py-3 rounded hover:bg-blue-600 transition-colors duration-300"
+                >
                   Log In
                 </button>
               )}
             </li>
           </ul>
 
-          <button 
+          <button
             className="absolute top-4 right-6 text-2xl cursor-pointer lg:hidden"
-            onClick={toggleMenu}>
+            onClick={toggleMenu}
+          >
             <IoClose />
           </button>
         </div>
 
-        <button 
+        <button
           className="text-2xl cursor-pointer lg:hidden"
-          onClick={toggleMenu}>
+          onClick={toggleMenu}
+        >
           <IoMenu />
         </button>
 
@@ -158,7 +161,8 @@ const Navbar = ({ setRepos }) => {
           href="https://github.com/Sourish2003/react_app"
           target="_blank"
           rel="noopener noreferrer"
-          className="ml-auto mr-4 hover:opacity-80 transition-opacity duration-300">
+          className="ml-auto mr-4 hover:opacity-80 transition-opacity duration-300"
+        >
           <div>
             <GithubIcon />
           </div>
