@@ -1,6 +1,5 @@
 import "../App";
 import React, { useState, useEffect } from "react";
-import { useAuth0 } from "@auth0/auth0-react";
 import { fetchGithubAccessToken } from "../github_auth/github.jsx"; // Make sure this import is correct
 import "../App.css";
 
@@ -8,46 +7,6 @@ function Home() {
   const [repos, setRepos] = useState([]);
   const [loading, setLoading] = useState(false);
   const [error, setError] = useState(null);
-  const { user, isAuthenticated } = useAuth0();
-
-  const fetchRepos = async () => {
-    if (!isAuthenticated) return;
-
-    try {
-      // const githubIdentity = user?.identities?.find(
-      //   (id) => id.provider === "github"
-      // );
-      console.log(user);
-
-      const repos = await fetchGithubAccessToken(user);
-      console.log("Fetched Repos:", repos);
-      setRepos(repos); // Set repos state in App component
-    } catch (error) {
-      console.error("Error fetching repositories:", error);
-    }
-  };
-
-  // const fetchRepos = async () => {
-  //   if (!isAuthenticated) return;
-
-  //   setLoading(true);
-  //   setError(null); // Reset error state before fetching
-
-  //   try {
-  //     const user = await getAccessTokenSilently({
-  //       audience: "https://dev-hrmgixm7udp8vimi.us.auth0.com/api/v2/",
-  //       scope: "read:repo read:user repo",
-  //     });
-
-  //     const fetchedRepos = await fetchGitHubRepositories(user);
-  //     setRepos(fetchedRepos); // Store the fetched repositories
-  //   } catch (err) {
-  //     console.error("Error fetching repositories:", err);
-  //     setError("Failed to fetch repositories. Please try again.");
-  //   } finally {
-  //     setLoading(false);
-  //   }
-  // };
 
   return (
     <div className="min-h-screen bg-white">
@@ -62,11 +21,8 @@ function Home() {
               No need to write test cases for APIs, just connect your repository
               and let the automated tests run!
             </p>
-            <button
-              onClick={fetchRepos} // Fetch repositories on button click
-              className="bg-[#4554CB] hover:bg-[#3A46AC] text-white font-medium px-8 py-3 rounded-lg transition-colors"
-            >
-              Fetch GitHub Repos
+            <button className="bg-[#4554CB] hover:bg-[#3A46AC] text-white font-medium px-8 py-3 rounded-lg transition-colors">
+              Get Started
             </button>
           </div>
 

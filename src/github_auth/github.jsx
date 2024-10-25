@@ -44,8 +44,6 @@ export const fetchGithubAccessToken = async (user) => {
         }
       }
     }
-
-    return response.data; // Return the repositories data
   } catch (error) {
     console.error("Error fetching GitHub repositories:", error);
     throw error;

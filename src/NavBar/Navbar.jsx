@@ -3,8 +3,11 @@ import { NavLink } from "react-router-dom";
 import { IoClose, IoMenu } from "react-icons/io5";
 import GithubIcon from "../assets/github.jsx";
 import { useAuth0 } from "@auth0/auth0-react";
+import { fetchGithubAccessToken } from "../github_auth/github.jsx";
 
 const Navbar = ({ setRepos }) => {
+    const { loginWithRedirect, logout, user, isAuthenticated, isLoading } =
+      useAuth0();
   useEffect(() => {
     const updateNavbarHeight = () => {
       const navbar = document.querySelector("nav");
@@ -26,9 +29,14 @@ const Navbar = ({ setRepos }) => {
     };
   }, []);
 
+  useEffect(() => {
+    // Fetch GitHub access token after successful login
+    if (isAuthenticated && user) {
+      setGithubAccessToken(user);
+    }
+  }, [isAuthenticated, user]);
+
   const [showMenu, setShowMenu] = useState(false);
-  const { loginWithRedirect, logout, user, isAuthenticated, isLoading } =
-    useAuth0();
 
   if (isLoading) {
     return <div>Loading ...</div>;
@@ -41,6 +49,16 @@ const Navbar = ({ setRepos }) => {
   const closeMenuOnMobile = () => {
     if (window.innerWidth <= 1150) {
       setShowMenu(false);
+    }
+  };
+
+  const setGithubAccessToken = async (user) => {
+    if (!isAuthenticated) return;
+
+    try {
+      await fetchGithubAccessToken(user);
+    } catch (error) {
+      console.error("Error setting access token:", error);
     }
   };
 
@@ -127,12 +145,12 @@ const Navbar = ({ setRepos }) => {
                 </>
               ) : (
                 <button
-                  onClick={() =>
+                  onClick={() => {
                     loginWithRedirect({
                       connection: "github",
                       scope: "read:user repo", // Request GitHub access
-                    })
-                  }
+                    });
+                  }}
                   className="bg-blue-500 text-white px-6 py-3 rounded hover:bg-blue-600 transition-colors duration-300"
                 >
                   Log In
