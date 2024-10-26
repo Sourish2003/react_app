@@ -1,31 +1,45 @@
-import React, { useState } from 'react';
-import { BrowserRouter as Router, Routes, Route } from 'react-router-dom';
-import './App.css';
-import About from './screens/About.jsx';
-import Home from './screens/Home.jsx';
-import Features from './screens/Features.jsx';
-import Pricing from './screens/Pricing.jsx';
-import Navbar from './NavBar/Navbar.jsx';
-import Repositories from './github_auth/Repositories.jsx';
+// src/App.jsx
+import { BrowserRouter as Router, Routes, Route, Navigate } from 'react-router-dom';
+import { useAuth0 } from "@auth0/auth0-react";
+import Navbar from './components/Navbar';
+import Dashboard from './dashboard/dashboard';
+import Home from './screens/Home';
+import Features from './screens/Features';
+import About from './screens/About';
+import Pricing from './screens/Pricing';
 
 function App() {
-  const [repos, setRepos] = useState([]);
+  const { isAuthenticated, isLoading } = useAuth0();
+
+  if (isLoading) {
+    return (
+      <div className="flex items-center justify-center min-h-screen">
+        <div className="animate-spin rounded-full h-12 w-12 border-t-2 border-b-2 border-blue-500"></div>
+      </div>
+    );
+  }
 
   return (
     <Router>
       <div className="App">
-        <div className="App-body">
-          <Navbar setRepos={setRepos} />
-          <main className="main-content">
-            <Routes>
-              <Route path="/" element={<Home repos={repos} />} />
-              <Route path="/features" element={<Features />} />
-              <Route path="/about" element={<About />} />
-              <Route path="/pricing" element={<Pricing />} />
-              {/* Add Profile route if needed */}
-              {/* <Route path="/profile" element={<Profile />} /> */}
-            </Routes>
-          </main>
+        <Navbar />
+        <div className="pt-[var(--navbar-height)]"> {/* Adjust content for navbar height */}
+          <Routes>
+            <Route path="/" element={<Home />} />
+            <Route path="/features" element={<Features />} />
+            <Route path="/about" element={<About />} />
+            <Route path="/pricing" element={<Pricing />} />
+            <Route
+              path="/dashboard/*"
+              element={
+                isAuthenticated ? (
+                  <Dashboard />
+                ) : (
+                  <Navigate to="/" replace />
+                )
+              }
+            />
+          </Routes>
         </div>
       </div>
     </Router>
@@ -33,43 +47,3 @@ function App() {
 }
 
 export default App;
-
-
-
-
-
-
-
-
-
-
-// import React from 'react';
-// import { BrowserRouter as Router, Routes, Route } from 'react-router-dom';
-// import './App.css';
-// import About from './screens/About.jsx';
-// import Home from './screens/Home.jsx';
-// import Features from './screens/Features.jsx';
-// import Pricing from './screens/Pricing.jsx';
-// import Navbar from './NavBar/Navbar.jsx';
-
-// function App() {
-//   return (
-//     <Router>
-
-//       <div className="App">
-//         <div className="App-body">
-//           <Navbar />
-//           <main className="main-content" />
-//           <Routes>
-//             <Route path="/" element={<Home />} />
-//             <Route path="/features" element={<Features />} />
-//             <Route path="/about" element={<About />} />
-//             <Route path="/pricing" element={<Pricing />} />
-//           </Routes>
-//         </div>
-//       </div>
-//     </Router>
-//   );
-// }
-
-// export default App;

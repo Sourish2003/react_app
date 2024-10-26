@@ -1,13 +1,17 @@
+// src/components/Navbar/index.jsx
 import React, { useState, useEffect } from "react";
-import { NavLink } from "react-router-dom";
+import { NavLink, useNavigate, useLocation } from "react-router-dom";
 import { IoClose, IoMenu } from "react-icons/io5";
 import GithubIcon from "../assets/github.jsx";
 import { useAuth0 } from "@auth0/auth0-react";
 import { fetchGithubAccessToken } from "../github_auth/github.jsx";
 
 const Navbar = ({ setRepos }) => {
-    const { loginWithRedirect, logout, user, isAuthenticated, isLoading } =
-      useAuth0();
+  const { loginWithRedirect, logout, user, isAuthenticated, isLoading } = useAuth0();
+  const navigate = useNavigate();
+  const location = useLocation();
+  const [showMenu, setShowMenu] = useState(false);
+
   useEffect(() => {
     const updateNavbarHeight = () => {
       const navbar = document.querySelector("nav");
@@ -20,23 +24,31 @@ const Navbar = ({ setRepos }) => {
       }
     };
 
-    updateNavbarHeight(); // Run on mount
-
+    updateNavbarHeight();
     window.addEventListener("resize", updateNavbarHeight);
 
     return () => {
-      window.removeEventListener("resize", updateNavbarHeight); // Clean up on unmount
+      window.removeEventListener("resize", updateNavbarHeight);
     };
   }, []);
 
   useEffect(() => {
-    // Fetch GitHub access token after successful login
-    if (isAuthenticated && user) {
-      setGithubAccessToken(user);
-    }
-  }, [isAuthenticated, user]);
+    const handleAuthentication = async () => {
+      if (isAuthenticated && user) {
+        try {
+          await setGithubAccessToken(user);
+          // Only redirect to dashboard if we're not already there
+          if (!location.pathname.startsWith('/dashboard')) {
+            navigate('/dashboard');
+          }
+        } catch (error) {
+          console.error("Error during authentication:", error);
+        }
+      }
+    };
 
-  const [showMenu, setShowMenu] = useState(false);
+    handleAuthentication();
+  }, [isAuthenticated, user, navigate, location]);
 
   if (isLoading) {
     return <div>Loading ...</div>;
@@ -77,45 +89,60 @@ const Navbar = ({ setRepos }) => {
               </NavLink>
             </li>
 
-            <li>
-              <NavLink
-                to="/"
-                className="font-semibold hover:text-blue-500 transition-colors duration-400"
-                onClick={closeMenuOnMobile}
-              >
-                Home
-              </NavLink>
-            </li>
+            {/* Show different nav items based on authentication */}
+            {!isAuthenticated ? (
+              <>
+                <li>
+                  <NavLink
+                    to="/"
+                    className="font-semibold hover:text-blue-500 transition-colors duration-400"
+                    onClick={closeMenuOnMobile}
+                  >
+                    Home
+                  </NavLink>
+                </li>
 
-            <li>
-              <NavLink
-                to="/features"
-                className="font-semibold hover:text-blue-500 transition-colors duration-400"
-                onClick={closeMenuOnMobile}
-              >
-                Features
-              </NavLink>
-            </li>
+                <li>
+                  <NavLink
+                    to="/features"
+                    className="font-semibold hover:text-blue-500 transition-colors duration-400"
+                    onClick={closeMenuOnMobile}
+                  >
+                    Features
+                  </NavLink>
+                </li>
 
-            <li>
-              <NavLink
-                to="/about"
-                className="font-semibold hover:text-blue-500 transition-colors duration-400"
-                onClick={closeMenuOnMobile}
-              >
-                About Us
-              </NavLink>
-            </li>
+                <li>
+                  <NavLink
+                    to="/about"
+                    className="font-semibold hover:text-blue-500 transition-colors duration-400"
+                    onClick={closeMenuOnMobile}
+                  >
+                    About Us
+                  </NavLink>
+                </li>
 
-            <li>
-              <NavLink
-                to="/pricing"
-                className="font-semibold hover:text-blue-500 transition-colors duration-400"
-                onClick={closeMenuOnMobile}
-              >
-                Pricing
-              </NavLink>
-            </li>
+                <li>
+                  <NavLink
+                    to="/pricing"
+                    className="font-semibold hover:text-blue-500 transition-colors duration-400"
+                    onClick={closeMenuOnMobile}
+                  >
+                    Pricing
+                  </NavLink>
+                </li>
+              </>
+            ) : (
+              <li>
+                <NavLink
+                  to="/dashboard"
+                  className="font-semibold hover:text-blue-500 transition-colors duration-400"
+                  onClick={closeMenuOnMobile}
+                >
+                  Dashboard
+                </NavLink>
+              </li>
+            )}
 
             <li className="flex flex-col lg:flex-row items-center gap-4">
               {isAuthenticated ? (
@@ -148,7 +175,7 @@ const Navbar = ({ setRepos }) => {
                   onClick={() => {
                     loginWithRedirect({
                       connection: "github",
-                      scope: "read:user repo", // Request GitHub access
+                      scope: "read:user repo",
                     });
                   }}
                   className="bg-blue-500 text-white px-6 py-3 rounded hover:bg-blue-600 transition-colors duration-300"
@@ -174,7 +201,6 @@ const Navbar = ({ setRepos }) => {
           <IoMenu />
         </button>
 
-        {/* GitHub Icon aligned to the right with padding */}
         <a
           href="https://github.com/Sourish2003/react_app"
           target="_blank"
